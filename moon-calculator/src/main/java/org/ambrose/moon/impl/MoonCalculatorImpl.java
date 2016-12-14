@@ -19,7 +19,13 @@ public class MoonCalculatorImpl implements MoonCalculator {
     }
 
     private double truePhaseTimeJulian(double k) {
-        double phaseType = Math.abs(k % 1d);
+        double phaseType = k;
+        while (phaseType >= 1) {
+            phaseType = phaseType - 1d;
+        }
+        while (phaseType < 0) {
+            phaseType = phaseType + 1d;
+        }
         if (!Arrays.asList(0d, 0.25d, 0.5d, 0.75d).contains(phaseType)) {
             throw new IllegalArgumentException();
         }
