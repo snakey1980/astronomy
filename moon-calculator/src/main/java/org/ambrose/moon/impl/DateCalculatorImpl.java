@@ -4,11 +4,12 @@ import org.ambrose.moon.DateCalculator;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class DateCalculatorImpl implements DateCalculator {
 
-    private static final LocalDateTime JAN_1_1600_MIDNIGHT_UTC = LocalDateTime.of(1600, 1, 1, 0, 0);
+    private static final LocalDateTime JAN_1_1600_MIDNIGHT_DATETIME = LocalDateTime.of(1600, 1, 1, 0, 0);
     private static final double JAN_1_1600_MIDNIGNT_JULIAN = 2_305_447.5d;
     private static final long SECONDS_IN_DAY = 60 * 60 * 24;
 
@@ -20,15 +21,15 @@ public class DateCalculatorImpl implements DateCalculator {
         double diff = julian - JAN_1_1600_MIDNIGNT_JULIAN;
         long daysDiff = (long) diff;
         long partDaySeconds = (long) ((diff - Double.valueOf(daysDiff)) * Double.valueOf(SECONDS_IN_DAY));
-        return JAN_1_1600_MIDNIGHT_UTC.plusDays(daysDiff).plusSeconds(partDaySeconds);
+        return JAN_1_1600_MIDNIGHT_DATETIME.plusDays(daysDiff).plusSeconds(partDaySeconds);
     }
 
     @Override
     public double toJulian(LocalDateTime dateTime) {
-        if (dateTime.isBefore(JAN_1_1600_MIDNIGHT_UTC)) {
+        if (dateTime.isBefore(JAN_1_1600_MIDNIGHT_DATETIME)) {
             throw new IllegalArgumentException();
         }
-        long secondsSinceStart = Duration.between(JAN_1_1600_MIDNIGHT_UTC, dateTime).getSeconds();
+        long secondsSinceStart = Duration.between(JAN_1_1600_MIDNIGHT_DATETIME, dateTime).getSeconds();
         long daysSinceStart = secondsSinceStart / SECONDS_IN_DAY;
         double partDayFraction = Double.valueOf(secondsSinceStart % SECONDS_IN_DAY) / Double.valueOf(SECONDS_IN_DAY);
         return JAN_1_1600_MIDNIGNT_JULIAN + Double.valueOf(daysSinceStart) + partDayFraction;
