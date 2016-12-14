@@ -16,6 +16,17 @@ import static org.junit.Assert.*;
 public class MoonCalculatorImplTest {
 
     @Test
+    public void testWind() {
+        MoonCalculatorImpl moonCalculator = new MoonCalculatorImpl(new DateCalculatorImpl());
+        assertEquals(0.5d, moonCalculator.wind(0.5d,1d), 0.00001);
+        assertEquals(0.5d, moonCalculator.wind(1.5d,1d), 0.00001);
+        assertEquals(0.5d, moonCalculator.wind(-3.5d,1d), 0.00001);
+        assertEquals(5d, moonCalculator.wind(365d,360d), 0.00001);
+        assertEquals(1d, moonCalculator.wind(721d,360d), 0.00001);
+        assertEquals(1d, moonCalculator.wind(-359d,360d), 0.00001);
+    }
+
+    @Test
     public void testWithin2MinutesOfNavy() throws IOException {
         MoonCalculator moonCalculator = new MoonCalculatorImpl(new DateCalculatorImpl());
         Map<Double, String> phaseMap = new HashMap<>();

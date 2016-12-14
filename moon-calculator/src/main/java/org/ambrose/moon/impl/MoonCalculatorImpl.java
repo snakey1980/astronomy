@@ -19,13 +19,7 @@ public class MoonCalculatorImpl implements MoonCalculator {
     }
 
     private double truePhaseTimeJulian(double k) {
-        double phaseType = k;
-        while (phaseType >= 1) {
-            phaseType = phaseType - 1d;
-        }
-        while (phaseType < 0) {
-            phaseType = phaseType + 1d;
-        }
+        double phaseType = wind(k, 1);
         if (!Arrays.asList(0d, 0.25d, 0.5d, 0.75d).contains(phaseType)) {
             throw new IllegalArgumentException();
         }
@@ -150,13 +144,17 @@ public class MoonCalculatorImpl implements MoonCalculator {
     }
 
     private double toRadians(double degrees) {
-        while (degrees < 0) {
-            degrees = degrees + 360;
-        }
-        while (degrees > 360) {
-            degrees = degrees - 360;
-        }
-        return Math.toRadians(degrees);
+        return Math.toRadians(wind(degrees, 360));
+    }
+
+    /**
+     * Wind the given number into the interval [0, intervalEndExclusive)
+     * @param d
+     * @param intervalEndExclusive
+     * @return
+     */
+    double wind(double d, double intervalEndExclusive) {
+        return d - intervalEndExclusive * (Math.floor(d / intervalEndExclusive));
     }
 
 }
