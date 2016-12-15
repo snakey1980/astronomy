@@ -1,19 +1,19 @@
 package org.ambrose.moon.impl;
 
 import org.ambrose.moon.DateCalculator;
-import org.ambrose.moon.MoonCalculator;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MoonCalculatorImplTest {
 
@@ -45,23 +45,17 @@ public class MoonCalculatorImplTest {
     @Test
     public void testWithin1MinuteOfNavy() throws IOException {
         Map<Double, String> phaseMap = new HashMap<>();
-        phaseMap.put(0d, "New Moon");
-        phaseMap.put(0.25d, "First Quarter");
-        phaseMap.put(0.5d, "Full Moon");
-        phaseMap.put(0.75d, "Last Quarter");
+        phaseMap.put(MoonCalculatorImpl.NEW, "New Moon");
+        phaseMap.put(MoonCalculatorImpl.FIRST_QUARTER, "First Quarter");
+        phaseMap.put(MoonCalculatorImpl.FULL, "Full Moon");
+        phaseMap.put(MoonCalculatorImpl.LAST_QUARTER, "Last Quarter");
         long maxDiff = 0;
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/navy.csv")));
         for (double k = -2473.75d; k <= 1236.5d; k = k + 0.25d) {
             String row = reader.readLine();
             String[] bits = row.split(",");
             String phase = bits[0];
-            double phaseType = k;
-            while (phaseType >= 1) {
-                phaseType = phaseType - 1d;
-            }
-            while (phaseType < 0) {
-                phaseType = phaseType + 1d;
-            }
+            double phaseType = moonCalculator.phaseType(k);
             assertEquals(phaseMap.get(phaseType), phase);
             LocalDateTime navyTime = LocalDateTime.parse(bits[1] + bits[2], DateTimeFormatter.ofPattern("yyyy MMM ddHH:mm"));
             LocalDateTime ourTime = moonCalculator.timeOfPhase(k);
