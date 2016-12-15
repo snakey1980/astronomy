@@ -72,12 +72,7 @@ public class DateCalculatorImpl implements DateCalculator {
                 }[dynamicalTime.getYear() - 1998];
             }
             else { // year >= 2008
-                double t = Double.valueOf(dynamicalTime.getYear() - 2000) / 100d;
-                delta = 102d + 102d * t + 25.3d * t * t;
-                if (dynamicalTime.getYear() < 2100) {
-                    delta = delta + 0.37 * (dynamicalTime.getYear() - 2100);
-                }
-
+                delta = 66d;
             }
         }
         return dynamicalTime.minusSeconds((long) delta);

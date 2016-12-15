@@ -3,10 +3,27 @@ package org.ambrose.moon.impl;
 import org.ambrose.moon.DateCalculator;
 import org.ambrose.moon.MoonCalculator;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class MoonCalculatorImpl implements MoonCalculator {
+
+    static final double NEW = 0d;
+    static final double FIRST_QUARTER = 0.25d;
+    static final double FULL = 0.5d;
+    static final double LAST_QUARTER = 0.75d;
+
+    static final List<Double> PHASE_TYPES = asList(
+            NEW,
+            FIRST_QUARTER,
+            FULL,
+            LAST_QUARTER
+    );
 
     private final DateCalculator dateCalculator;
 
@@ -18,9 +35,25 @@ public class MoonCalculatorImpl implements MoonCalculator {
         return dateCalculator.toNearestMinute(dateCalculator.toCivilTime(dateCalculator.toDateTime(truePhaseTimeJulian(k))));
     }
 
-    private double truePhaseTimeJulian(double k) {
-        double phaseType = wind(k, 1);
-        if (!Arrays.asList(0d, 0.25d, 0.5d, 0.75d).contains(phaseType)) {
+    @Override
+    public double approximateK(LocalDateTime dateTime) {
+        LocalDateTime beginningOfYear = dateTime.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime beginningOfNextYear = beginningOfYear.plusYears(1);
+        double secondsInYear = Duration.between(beginningOfYear, beginningOfNextYear).getSeconds();
+        double secondsToDateTime = Duration.between(beginningOfYear, dateTime).getSeconds();
+        double yearFraction = secondsToDateTime / secondsInYear;
+        double year = Double.valueOf(dateTime.getYear()) + yearFraction;
+        double approximation = (year - 2000d) * 12.3685d;
+        return Math.round(approximation * 4d) / 4d;
+    }
+
+    double phaseType(double k) {
+        return wind(k, 1);
+    }
+
+    double truePhaseTimeJulian(double k) {
+        double phaseType = phaseType(k);
+        if (!PHASE_TYPES.contains(phaseType)) {
             throw new IllegalArgumentException();
         }
         double t = k / 1_236.85d; // time in Julian centuries since the epoch 2000
@@ -63,7 +96,7 @@ public class MoonCalculatorImpl implements MoonCalculator {
         if (phaseType == 0d || phaseType == 0.5d) { // new or full moon
             boolean new_ = phaseType == 0d;
             correction =
-                    - (new_ ? 0.407_20d : 0.406_14d)         * Math.sin(m_prime)
+                            - (new_ ? 0.407_20d : 0.406_14d)         * Math.sin(m_prime)
                             + (new_ ? 0.172_41d : 0.173_02d) * e     * Math.sin(m)
                             + (new_ ? 0.016_08d : 0.016_14d)         * Math.sin(2d * m_prime)
                             + (new_ ? 0.010_39d : 0.010_43d)         * Math.sin(2d * f)
@@ -91,7 +124,7 @@ public class MoonCalculatorImpl implements MoonCalculator {
         }
         else { // first and last quarter
             correction =
-                    - 0.628_01d         * Math.sin(m_prime)
+                            - 0.628_01d         * Math.sin(m_prime)
                             + 0.171_72d * e     * Math.sin(m)
                             - 0.011_83d * e     * Math.sin(m_prime + m)
                             + 0.008_62d         * Math.sin(2d * m_prime)
