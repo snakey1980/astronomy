@@ -1,4 +1,4 @@
-# moon
+# MoonCalculator
 Moon phase calculator based on the method described by Jean Meeus in Astronomical Algorithms (https://www.amazon.com/Astronomical-Algorithms-Jean-Meeus/dp/0943396352).
 
 The interface is:
@@ -11,4 +11,15 @@ An integer value of k gives a new moon, an integer plus 0.25 gives a first quart
 
 which gives an approximate value of k for a given date.
 
-The implementation here will not give an answer for any dates before 1800.
+It will not give an answer for any dates before 1800.
+
+# SunCalculator
+Sun longitude calculator based on Jean Meeus.  The interface is:
+
+    double longitude(LocalDateTime dateTime);
+
+which gives the apparent longitude in degrees at the given time.  There is also the method
+
+    LocalDateTime seek(int year, double longitude);
+
+which finds, to the nearest minute, the moment during the given year when the given longitude was apparent.  This only accepts multiple of 30 degrees in [0, 360).
