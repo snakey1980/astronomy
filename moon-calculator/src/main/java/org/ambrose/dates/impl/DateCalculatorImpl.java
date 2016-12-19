@@ -1,6 +1,6 @@
-package org.ambrose.moon.impl;
+package org.ambrose.dates.impl;
 
-import org.ambrose.moon.DateCalculator;
+import org.ambrose.dates.DateCalculator;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,13 +1,16 @@
 package org.ambrose.moon.impl;
 
-import org.ambrose.moon.DateCalculator;
+import org.ambrose.dates.DateCalculator;
 import org.ambrose.moon.MoonCalculator;
+import org.ambrose.util.Utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.ambrose.util.Utils.toRadians;
+import static org.ambrose.util.Utils.wind;
 
 public class MoonCalculatorImpl implements MoonCalculator {
 
@@ -172,20 +175,6 @@ public class MoonCalculatorImpl implements MoonCalculator {
                 + 0.000_035d * Math.sin(a13)
                 + 0.000_023d * Math.sin(a14);
         return meanPhaseTime + correction;
-    }
-
-    private double toRadians(double degrees) {
-        return Math.toRadians(wind(degrees, 360));
-    }
-
-    /**
-     * Wind the given number into the interval [0, intervalEndExclusive)
-     * @param d
-     * @param intervalEndExclusive
-     * @return
-     */
-    double wind(double d, double intervalEndExclusive) {
-        return d - intervalEndExclusive * (Math.floor(d / intervalEndExclusive));
     }
 
 }

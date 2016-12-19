@@ -1,6 +1,8 @@
 package org.ambrose.moon.impl;
 
-import org.ambrose.moon.DateCalculator;
+import org.ambrose.dates.DateCalculator;
+import org.ambrose.dates.impl.DateCalculatorImpl;
+import org.ambrose.util.Utils;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -30,16 +32,6 @@ public class MoonCalculatorImplTest {
         DateCalculator dateCalculator = new DateCalculatorImpl();
         LocalDateTime actual = dateCalculator.toNearestMinute(dateCalculator.toDateTime(moonCalculator.truePhaseTimeJulian(k)));
         assertEquals(LocalDateTime.of(2044, 1, 21, 23, 48), actual);
-    }
-
-    @Test
-    public void testWind() {
-        assertEquals(0.5d, moonCalculator.wind(0.5d,1d), 0.00001);
-        assertEquals(0.5d, moonCalculator.wind(1.5d,1d), 0.00001);
-        assertEquals(0.5d, moonCalculator.wind(-3.5d,1d), 0.00001);
-        assertEquals(5d, moonCalculator.wind(365d,360d), 0.00001);
-        assertEquals(1d, moonCalculator.wind(721d,360d), 0.00001);
-        assertEquals(1d, moonCalculator.wind(-359d,360d), 0.00001);
     }
 
     @Test
